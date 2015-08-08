@@ -114,6 +114,7 @@ parseCommandLine = ->
   options.alias('f', 'foreground').boolean('f').describe('f', 'Keep the browser process in the foreground.')
   options.alias('h', 'help').boolean('h').describe('h', 'Print this usage message.')
   options.alias('l', 'log-file').string('l').describe('l', 'Log all output to file.')
+  options.alias('m', 'monkey-patch').string('m').describe('m', 'Location of a Monkey-Patching script to run after every require() statement.')
   options.alias('n', 'new-window').boolean('n').describe('n', 'Open a new window.')
   options.boolean('profile-startup').describe('profile-startup', 'Create a profile of the startup execution time.')
   options.alias('r', 'resource-path').string('r').describe('r', 'Set the path to the Atom source directory and enable dev-mode.')
@@ -140,11 +141,15 @@ parseCommandLine = ->
   pathsToOpen = args._
   test = args['test']
   specDirectory = args['spec-directory']
+  monkeyPatch = args['monkey-patch']
   newWindow = args['new-window']
   pidToKillWhenClosed = args['pid'] if args['wait']
   logFile = args['log-file']
   socketPath = args['socket-path']
   profileStartup = args['profile-startup']
+
+  if monkeyPatch?
+    monkeyPatch = path.resolve executedFrom, monkeyPatch
 
   if args['resource-path']
     devMode = true
@@ -170,6 +175,6 @@ parseCommandLine = ->
   process.env.PATH = args['path-environment'] if args['path-environment']
 
   {resourcePath, pathsToOpen, executedFrom, test, version, pidToKillWhenClosed,
-   devMode, safeMode, newWindow, specDirectory, logFile, socketPath, profileStartup}
+   devMode, safeMode, monkeyPatch, newWindow, specDirectory, logFile, socketPath, profileStartup}
 
 start()

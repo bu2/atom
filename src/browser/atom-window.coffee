@@ -19,7 +19,7 @@ class AtomWindow
   isSpec: null
 
   constructor: (settings={}) ->
-    {@resourcePath, pathToOpen, locationsToOpen, @isSpec, @exitWhenDone, @safeMode, @devMode} = settings
+    {@resourcePath, pathToOpen, locationsToOpen, @isSpec, @exitWhenDone, @monkeyPatch, @safeMode, @devMode} = settings
     locationsToOpen ?= [{pathToOpen}] if pathToOpen
     locationsToOpen ?= []
 
@@ -36,6 +36,9 @@ class AtomWindow
     # taskbar's icon. See https://github.com/atom/atom/issues/4811 for more.
     if process.platform is 'linux'
       options.icon = @constructor.iconPath
+
+    if @monkeyPatch
+      options.preload = @monkeyPatch
 
     @browserWindow = new BrowserWindow options
     global.atomApplication.addWindow(this)
